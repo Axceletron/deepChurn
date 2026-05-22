@@ -131,7 +131,6 @@ Generated correlation heatmap after temporary encoding of categorical features t
 
 Upcoming work:
 
-- Feature Engineering
 - Data Preprocessing
 - ANN Model Building
 - Model Evaluation
