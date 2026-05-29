@@ -1,111 +1,131 @@
-# Customer Churn Prediction using ANN
+# DeepChurn - Customer Churn Prediction using Deep Learning
 
-## Project Overview
+## Overview
 
-This project focuses on predicting customer churn using an Artificial Neural Network (ANN).
+DeepChurn is a Deep Learning project that predicts whether a telecom customer is likely to churn using an Artificial Neural Network (ANN). The application is built with Python, TensorFlow/Keras, and Streamlit.
 
-The goal is to build an end-to-end Deep Learning project covering:
+The project includes:
 
-- Exploratory Data Analysis (EDA)
-- Data preprocessing
-- Feature engineering
-- ANN model training
-- Model evaluation
-- Deployment
+- Data preprocessing pipeline
+- ANN model training notebooks
+- Pretrained model artifacts
+- Streamlit web application
+- Docker support
+- Helm chart for Kubernetes deployment
 
-Current Progress:
-- ✅ Project setup completed
-- ✅ Dataset imported
-- ✅ Exploratory Data Analysis (EDA) completed
-- ⏳ Feature Engineering in progress
-- ⏳ ANN model training pending
-- ⏳ Deployment pending
+---
+
+# Project Architecture
+
+```text
+User Input → Streamlit App → Data Preprocessing → ANN Model → Prediction Result
+```
+
+---
+
+# Features
+
+- Predict customer churn probability
+- Interactive Streamlit UI
+- TensorFlow/Keras ANN model
+- Preprocessing using saved scaler and feature mappings
+- Dockerized application
+- Kubernetes deployment using Helm
+- Easy local development setup
+
+---
+
+# Tech Stack
+
+## Backend & ML
+
+- Python
+- TensorFlow / Keras
+- Scikit-learn
+- Pandas
+- NumPy
+
+## Frontend
+
+- Streamlit
+
+## Deployment
+
+- Docker
+- Kubernetes
+- Helm
+
+---
+
+# Project Structure
+
+```text
+deepChurn/
+│
+├── app/
+│   ├── app.py                  # Streamlit application
+│   ├── utils.py                # Prediction & preprocessing logic
+│
+├── models/
+│   ├── churn_ann_model.keras   # Trained ANN model
+│   ├── scaler.pkl              # Saved scaler
+│   ├── feature_columns.pkl     # Training feature columns
+│
+├── data/
+│   ├── WA_Fn-UseC_-Telco-Customer-Churn.csv
+│   ├── processed/
+│
+├── notebooks/
+│   ├── eda.ipynb               # Exploratory Data Analysis
+│   ├── model_training.ipynb    # Model training notebook
+│
+├── charts/
+│   └── deep-churn/             # Helm chart
+│
+├── Dockerfile
+├── requirements.txt
+└── README.md
+```
 
 ---
 
 # Dataset
 
-Dataset Used:
-IBM Telco Customer Churn Dataset
+The project uses the Telco Customer Churn dataset.
 
-The dataset contains customer-related information such as:
+Target column:
+
+- `Churn`
+
+Example features:
 
 - Gender
-- Senior citizen status
+- SeniorCitizen
+- Partner
+- Dependents
 - Tenure
-- Internet service
-- Contract type
-- Monthly charges
-- Total charges
-- Churn status
-
-Target Variable:
-```text
-Churn
-```
-
----
-
-# EDA Steps Performed
-
-## 1. Dataset Inspection
-
-Performed:
-
-- Shape analysis
-- Column inspection
-- Datatype checking
-- Statistical summaries
-
----
-
-## 2. Missing Value Handling
-
-Identified issues in:
-
-```text
-TotalCharges
-```
-
-Converted invalid values to numeric and removed null rows.
-
----
-
-## 3. Churn Distribution Analysis
-
-Analyzed class imbalance between:
-
-- Churn = Yes
-- Churn = No
-
-### Observation
-
-- Dataset is imbalanced.
-
----
-
-## 4. Feature Analysis
-
-Analyzed important features including:
-
-- tenure
+- InternetService
+- Contract
 - MonthlyCharges
-- Contract type
-
-### Visualizations Created
-
-- Count plots
-- Histograms
-- Boxplots
+- TotalCharges
 
 ---
 
-## 5. Correlation Analysis
+# Model Details
 
-Generated correlation heatmap after temporary encoding of categorical features to identify relationships between variables.
+The project uses an Artificial Neural Network (ANN) built using TensorFlow/Keras.
+
+## Workflow
+
+1. Load dataset
+2. Perform preprocessing
+3. Apply one-hot encoding
+4. Scale features using StandardScaler
+5. Train ANN model
+6. Save model and preprocessing artifacts
+7. Serve predictions through Streamlit
 
 ---
-
 # Key Insights from EDA
 
 - Customers with month-to-month contracts show higher churn.
@@ -115,28 +135,214 @@ Generated correlation heatmap after temporary encoding of categorical features t
 - Dataset contains class imbalance.
 
 ---
+# Measured Metrics for Model training
 
-# Technologies Used
+![alt text](image.png)
 
-- Python
-- Pandas
-- NumPy
-- Matplotlib
-- Seaborn
-- Jupyter Notebook
+| Observation                              | Meaning               |
+| ---------------------------------------- | --------------------- |
+| Training accuracy increasing             | learning progressing  |
+| Validation accuracy stable around 80–81% | good generalization   |
+| Small gap between curves                 | stable model          |
+| No validation collapse                   | no strong overfitting |
+
+
+![alt text](image-1.png)
+
+| Observation                              | Meaning                  |
+| ---------------------------------------- | ------------------------ |
+| Training loss decreasing steadily        | model learning           |
+| Validation loss also decreasing          | generalization improving |
+| No divergence between curves             | no major overfitting     |
+| Validation loss lower than training loss | regularization effects   |
+
+
+---
+# Installation
+
+## Clone Repository
+
+```bash
+git clone <your-repository-url>
+cd deepChurn
+```
 
 ---
 
-# Next Steps
+# Create Virtual Environment
 
-Upcoming work:
+## Linux / macOS
 
-- Data Preprocessing
-- ANN Model Building
-- Model Evaluation
-- Streamlit Deployment
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
+
+## Windows
+
+```bash
+python -m venv venv
+venv\Scripts\activate
+```
+
+---
+
+# Install Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+---
+
+# Run the Application
+
+```bash
+streamlit run app/app.py
+```
+
+Application will start at:
+
+```text
+http://localhost:8501
+```
+
+---
+
+# Using the Application
+
+1. Open the Streamlit UI
+2. Enter customer details
+3. Click `Predict Churn`
+4. View churn probability and prediction
+
+---
+
+# Docker Deployment
+
+## Build Docker Image
+
+```bash
+docker build -t deep-churn:v1 .
+```
+
+## Run Container
+
+```bash
+docker run -p 8501:8501 deep-churn:v1
+```
+
+---
+
+# Kubernetes Deployment
+
+The project includes a Helm chart under:
+
+```text
+charts/deep-churn
+```
+
+## Install using Helm
+
+```bash
+helm install deep-churn charts/deep-churn
+```
+
+## Upgrade Release
+
+```bash
+helm upgrade deep-churn charts/deep-churn
+```
+
+---
+
+# Streamlit Inputs
+
+The application currently accepts the following inputs:
+
+| Feature | Type |
+|---|---|
+| Gender | Categorical |
+| Senior Citizen | Binary |
+| Partner | Binary |
+| Dependents | Binary |
+| Tenure | Numeric |
+| Phone Service | Binary |
+| Internet Service | Categorical |
+| Contract | Categorical |
+| Monthly Charges | Numeric |
+| Total Charges | Numeric |
+
+---
+
+# Prediction Logic
+
+The application:
+
+1. Converts input into a Pandas DataFrame
+2. Applies one-hot encoding
+3. Aligns columns with training features
+4. Scales the input using saved scaler
+5. Runs ANN inference
+6. Returns:
+
+- Churn probability
+- Final churn prediction
+
+---
+
+# Future Improvements
+
+Possible enhancements:
+
+- Add model evaluation metrics dashboard
+- Add model retraining pipeline
+- Add explainability using SHAP
+
+# Troubleshooting
+
+## TensorFlow Issues on Apple Silicon
+
+For Apple Silicon Macs:
+
+```bash
+pip install tensorflow-macos
+pip install tensorflow-metal
+```
+
+---
+
+# Requirements
+
+Main libraries used:
+
+```text
+tensorflow
+streamlit
+pandas
+numpy
+scikit-learn
+joblib
+```
+
+---
+
+# Learning Objectives
+
+This project helps in understanding:
+
+- End-to-end ML workflow
+- ANN implementation
+- Feature preprocessing
+- Model deployment
+- Streamlit applications
+- Docker containerization
+- Kubernetes deployment
 
 ---
 
 # Author
-S Raj Shekhar
+
+Built as a Deep Learning and MLOps learning project.
+
+
