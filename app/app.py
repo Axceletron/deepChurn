@@ -1,25 +1,45 @@
 import streamlit as st
 
-st.title("Customer Churn Prediction")
+from utils import prediction_churn
+
+
+# =========================
+# Page Title
+# =========================
+
+st.title(
+    "Customer Churn Prediction"
+)
 
 st.write(
     "Deep Learning ANN Project"
 )
 
-import joblib
-import pandas as pd
 
-from tensorflow.keras.models import load_model
+# =========================
+# User Inputs
+# =========================
 
-model = load_model(
-    '../models/churn_ann_model.keras'
+gender = st.selectbox(
+    'Gender',
+    ['Male', 'Female']
 )
-scaler = joblib.load(
-    '../models/scaler.pkl'
+
+senior_citizen = st.selectbox(
+    'Senior Citizen',
+    [0, 1]
 )
-feature_columns = joblib.load(
-    '../models/feature_columns.pkl'
+
+partner = st.selectbox(
+    'Partner',
+    ['Yes', 'No']
 )
+
+dependents = st.selectbox(
+    'Dependents',
+    ['Yes', 'No']
+)
+
 tenure = st.slider(
     'Tenure',
     0,
@@ -27,15 +47,18 @@ tenure = st.slider(
     12
 )
 
-monthly_charges = st.number_input(
-    'Monthly Charges',
-    0.0,
-    200.0,
-    70.0
+phone_service = st.selectbox(
+    'Phone Service',
+    ['Yes', 'No']
 )
-gender = st.selectbox(
-    'Gender',
-    ['Male', 'Female']
+
+internet_service = st.selectbox(
+    'Internet Service',
+    [
+        'DSL',
+        'Fiber optic',
+        'No'
+    ]
 )
 
 contract = st.selectbox(
@@ -46,42 +69,73 @@ contract = st.selectbox(
         'Two year'
     ]
 )
+
+monthly_charges = st.number_input(
+    'Monthly Charges',
+    min_value=0.0,
+    max_value=200.0,
+    value=70.0
+)
+
+total_charges = st.number_input(
+    'Total Charges',
+    min_value=0.0,
+    max_value=10000.0,
+    value=1000.0
+)
+
+
+# =========================
+# Prediction Button
+# =========================
+
 if st.button("Predict Churn"):
+
     input_data = {
-    'gender': gender,
-    'tenure': tenure,
-    'MonthlyCharges': monthly_charges,
-    'Contract': contract
-    }
-        
-    input_data = {
+
         'gender': gender,
+
+        'SeniorCitizen': senior_citizen,
+
+        'Partner': partner,
+
+        'Dependents': dependents,
+
         'tenure': tenure,
+
+        'PhoneService': phone_service,
+
+        'InternetService': internet_service,
+
+        'Contract': contract,
+
         'MonthlyCharges': monthly_charges,
-        'Contract': contract
+
+        'TotalCharges': total_charges
     }
 
-    input_df = pd.DataFrame([input_data])
-    input_df = pd.get_dummies(input_df)
-    input_df = input_df.reindex(
-        columns=feature_columns,
-        fill_value=0
+    prediction, probability = prediction_churn(
+        input_data
     )
-    input_scaled = scaler.transform(
-        input_df
+
+    # =====================
+    # Results
+    # =====================
+
+    st.subheader(
+        "Prediction Result"
     )
-    prediction_prob = model.predict(
-        input_scaled
+
+    st.metric(
+        "Churn Probability",
+        f"{probability*100:.2f}%"
     )
-    prediction = (
-        prediction_prob > 0.5
-    ).astype(int)
-    st.subheader("Prediction Result")
-    st.write(
-        f"Churn Probability: "
-        f"{prediction_prob[0][0]*100:.2f}%"
+
+    st.progress(
+        float(probability)
     )
-    if prediction_prob > 0.5:
+
+    if prediction == 1:
 
         st.error(
             "Customer likely to churn"

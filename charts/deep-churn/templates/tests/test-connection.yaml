@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{ include "deep-churn.fullname" . }}-test-connection"
+  labels:
+    {{- include "deep-churn.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": test
+spec:
+  containers:
+    - name: wget
+      image: busybox
+      command: ['wget']
+      args: ['{{ include "deep-churn.fullname" . }}:{{ .Values.service.port }}']
+  restartPolicy: Never
