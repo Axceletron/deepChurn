@@ -1,17 +1,20 @@
 import joblib
 import pandas as pd
 import os
+import numpy as np
 from tensorflow.keras.models import load_model
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MODEL_PATH = os.path.join(BASE_DIR,'models','churn_ann_model.keras')
 SCALER_PATH=os.path.join(BASE_DIR,'models','scaler.pkl')
 FEATURE_PATH=os.path.join(BASE_DIR,'models','feature_columns.pkl')
+BACKGROUND_PATH = os.path.join(BASE_DIR,'data/processed','X_train.npy')
+
 model = load_model(MODEL_PATH)
 print(model)
 scaler = joblib.load(SCALER_PATH)
 feature_columns = joblib.load(FEATURE_PATH)
-
+X_train_scaled = np.load(BACKGROUND_PATH)
 # =========================
 # Preprocessing Function
 # =========================

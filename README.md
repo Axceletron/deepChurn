@@ -65,6 +65,7 @@ deepChurn/
 ├── app/
 │   ├── app.py                  # Streamlit application
 │   ├── utils.py                # Prediction & preprocessing logic
+│   ├── explainability.py       # Provides overview as to which feature caused Churn probability change
 │
 ├── models/
 │   ├── churn_ann_model.keras   # Trained ANN model
@@ -124,6 +125,7 @@ The project uses an Artificial Neural Network (ANN) built using TensorFlow/Keras
 5. Train ANN model
 6. Save model and preprocessing artifacts
 7. Serve predictions through Streamlit
+8. Explainable AI using SHAP
 
 ---
 # Key Insights from EDA
@@ -288,6 +290,172 @@ The application:
 
 - Churn probability
 - Final churn prediction
+- Reasoned Churn Prediction
+
+---
+
+# Explainable AI using SHAP
+
+The project now includes Explainable AI (XAI) using SHAP (SHapley Additive exPlanations) to interpret ANN predictions.
+
+Instead of only predicting whether a customer is likely to churn, the model can now explain:
+
+* Which features influenced the prediction
+* Which features increased churn probability
+* Which features reduced churn probability
+
+This transforms the ANN model from a black-box system into an interpretable AI application.
+
+---
+
+# SHAP Waterfall Plot Example
+
+![alt text](image-3.png)
+
+---
+
+# Understanding the SHAP Waterfall Plot
+
+The SHAP waterfall plot explains how the model moved from the average prediction to the final churn probability for a specific customer.
+
+---
+
+## Base Value
+
+At the bottom of the plot:
+
+```text
+E[f(X)] = 0.288
+```
+
+This represents the average churn probability across all customers in the dataset.
+
+The model starts from this baseline prediction.
+
+---
+
+## Final Prediction
+
+At the top of the plot:
+
+```text
+f(x) = 0.237
+```
+
+This is the final churn probability predicted for the selected customer.
+
+---
+
+# Feature Contributions
+
+Each feature pushes the prediction either:
+
+* Higher toward churn
+* Lower away from churn
+
+---
+
+## Color Meaning
+
+| Color      | Meaning                     |
+| ---------- | --------------------------- |
+| Red / Pink | Increases churn probability |
+| Blue       | Decreases churn probability |
+
+---
+
+# Example Interpretation
+
+## `tenure`
+
+```text
++0.04
+```
+
+This feature increased churn probability by approximately 4%.
+
+Lower tenure customers are generally more likely to churn.
+
+---
+
+## `InternetService_Fiber optic`
+
+```text
+-0.06
+```
+
+This feature reduced churn probability by approximately 6%.
+
+---
+
+## `Contract_Two year`
+
+Blue contribution indicates that long-term contracts help reduce churn risk.
+
+---
+
+# Scaled Feature Values
+
+Values shown on the left side such as:
+
+```text
+-0.832 = tenure
+```
+
+represent scaled feature values after preprocessing using `StandardScaler`.
+
+These are not the original raw feature values.
+
+---
+
+# Why Explainability Matters
+
+SHAP improves transparency and trust in machine learning systems.
+
+Benefits include:
+
+* Better business understanding
+* Easier debugging of model behavior
+* Improved stakeholder trust
+* Ability to explain individual predictions
+
+---
+
+# Technologies Used for Explainability
+
+* SHAP
+* Matplotlib
+* TensorFlow/Keras
+* Streamlit
+
+---
+
+# Explainability Workflow
+
+```text
+User Input
+    ↓
+Data Preprocessing
+    ↓
+ANN Prediction
+    ↓
+SHAP Explainer
+    ↓
+Feature Contribution Visualization
+```
+
+---
+
+# Key Learning Outcomes
+
+This implementation demonstrates understanding of:
+
+* Explainable AI (XAI)
+* Model interpretability
+* SHAP explainability
+* Local prediction explanations
+* ANN behavior analysis
+* Production-ready ML systems
 
 ---
 
@@ -297,7 +465,6 @@ Possible enhancements:
 
 - Add model evaluation metrics dashboard
 - Add model retraining pipeline
-- Add explainability using SHAP
 
 # Troubleshooting
 
@@ -323,6 +490,7 @@ pandas
 numpy
 scikit-learn
 joblib
+shap
 ```
 
 ---

@@ -1,7 +1,9 @@
 import streamlit as st
-
-from utils import prediction_churn
-
+from utils import (
+    prediction_churn,
+    preprocess_input
+)
+from app.explainability_1 import generate_shap_plot
 
 # =========================
 # Page Title
@@ -89,60 +91,76 @@ total_charges = st.number_input(
 # Prediction Button
 # =========================
 
-if st.button("Predict Churn"):
+if st.button("Reasoned Predict Churn"):
 
     input_data = {
-
         'gender': gender,
-
         'SeniorCitizen': senior_citizen,
-
         'Partner': partner,
-
         'Dependents': dependents,
-
         'tenure': tenure,
-
         'PhoneService': phone_service,
-
         'InternetService': internet_service,
-
         'Contract': contract,
-
         'MonthlyCharges': monthly_charges,
-
         'TotalCharges': total_charges
     }
 
-    prediction, probability = prediction_churn(
-        input_data
-    )
+    prediction, probability = prediction_churn(input_data)
 
+    processed_data = preprocess_input(input_data)
     # =====================
     # Results
     # =====================
 
-    st.subheader(
-        "Prediction Result"
-    )
+    st.subheader("Prediction Result")
 
     st.metric(
         "Churn Probability",
         f"{probability*100:.2f}%"
     )
 
-    st.progress(
-        float(probability)
-    )
+    st.progress(float(probability))
 
     if prediction == 1:
-
-        st.error(
-            "Customer likely to churn"
-        )
-
+        st.error("Customer likely to churn")
     else:
+        st.success("Customer likely to stay")
 
-        st.success(
-            "Customer likely to stay"
-        )
+    st.subheader("Model Explainability")
+    shap_plot = generate_shap_plot(processed_data)
+    st.pyplot(shap_plot)
+
+elif st.button("Predict Churn"):
+
+    input_data = {
+        'gender': gender,
+        'SeniorCitizen': senior_citizen,
+        'Partner': partner,
+        'Dependents': dependents,
+        'tenure': tenure,
+        'PhoneService': phone_service,
+        'InternetService': internet_service,
+        'Contract': contract,
+        'MonthlyCharges': monthly_charges,
+        'TotalCharges': total_charges
+    }
+
+    prediction, probability = prediction_churn(input_data)
+    # =====================
+    # Results
+    # =====================
+
+    st.subheader("Prediction Result")
+
+    st.metric(
+        "Churn Probability",
+        f"{probability*100:.2f}%"
+    )
+
+    st.progress(float(probability))
+
+    if prediction == 1:
+        st.error("Customer likely to churn")
+    else:
+        st.success("Customer likely to stay")
